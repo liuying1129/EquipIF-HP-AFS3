@@ -53,10 +53,6 @@ type
     procedure ComDataPacket1Packet(Sender: TObject; const Str: String);
     procedure ToolButton7Click(Sender: TObject);
     procedure ComPort1AfterOpen(Sender: TObject);
-    procedure ComPort1RxBuf(Sender: TObject; const Buffer; Count: Integer);
-    procedure ComPort1RxChar(Sender: TObject; Count: Integer);
-    procedure ComPort1RxFlag(Sender: TObject);
-    procedure ComPort1TxEmpty(Sender: TObject);
   private
     { Private declarations }
     procedure WMSyscommand(var message:TWMMouse);message WM_SYSCOMMAND;
@@ -329,36 +325,6 @@ begin
     result:=rightstr(result,4);
 end;
 
-function StrToList(const SourStr:string;const Separator:string):TStrings;
-//根据指定的分隔字符串(Separator)将字符串(SourStr)导入到字符串列表中
-var
-  vSourStr,s:string;
-  ll,lll:integer;
-begin
-  vSourStr:=SourStr;
-  Result := TStringList.Create;
-  lll:=length(Separator);
-
-  while pos(Separator,vSourStr)<>0 do
-  begin
-    ll:=pos(Separator,vSourStr);
-    Result.Add(copy(vSourStr,1,ll-1));
-    delete(vSourStr,1,ll+lll-1);
-  end;
-  Result.Add(vSourStr);
-  s:=vSourStr;
-end;
-
-function TListToVariant(AList:TList):OleVariant;
-var
-  P:Pointer;
-begin
-  Result:=VarArrayCreate([0,Sizeof(TList)],varByte);
-  P:=VarArrayLock(Result);
-  Move(AList,P^,Sizeof(TList));
-  VarArrayUnLock(Result);
-end;
-
 function TfrmMain.MakeDBConn:boolean;
 var
   newconnstr,ss: string;
@@ -463,6 +429,7 @@ VAR
   dlttype:string;
   sValue:string;
 begin
+  //有#$0也会触发该事件.说明Packet事件不会因为#$0而出现问题
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
 
@@ -500,30 +467,6 @@ begin
     ComPort1.SetDTR(true);
     ComPort1.SetRTS(true);
   end;
-end;
-
-procedure TfrmMain.ComPort1RxBuf(Sender: TObject; const Buffer;
-  Count: Integer);
-//var
-//  p:Pbyte;
-//  c:PChar;
-begin
-  //self.ComPort1.Read(c,Count);
-end;
-
-procedure TfrmMain.ComPort1RxChar(Sender: TObject; Count: Integer);
-begin
-//
-end;
-
-procedure TfrmMain.ComPort1RxFlag(Sender: TObject);
-begin
-//
-end;
-
-procedure TfrmMain.ComPort1TxEmpty(Sender: TObject);
-begin
-//
 end;
 
 initialization

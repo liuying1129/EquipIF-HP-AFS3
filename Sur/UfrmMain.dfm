@@ -326,10 +326,6 @@ object frmMain: TfrmMain
     StoredProps = [SpBasic]
     TriggersOnRxChar = False
     OnAfterOpen = ComPort1AfterOpen
-    OnRxChar = ComPort1RxChar
-    OnRxBuf = ComPort1RxBuf
-    OnTxEmpty = ComPort1TxEmpty
-    OnRxFlag = ComPort1RxFlag
     Left = 72
     Top = 104
   end
