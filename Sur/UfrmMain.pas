@@ -53,6 +53,10 @@ type
     procedure ComDataPacket1Packet(Sender: TObject; const Str: String);
     procedure ToolButton7Click(Sender: TObject);
     procedure ComPort1AfterOpen(Sender: TObject);
+    procedure ComPort1RxBuf(Sender: TObject; const Buffer; Count: Integer);
+    procedure ComPort1RxChar(Sender: TObject; Count: Integer);
+    procedure ComPort1RxFlag(Sender: TObject);
+    procedure ComPort1TxEmpty(Sender: TObject);
   private
     { Private declarations }
     procedure WMSyscommand(var message:TWMMouse);message WM_SYSCOMMAND;
@@ -264,6 +268,8 @@ begin
         ComPort1.BaudRate:=br9600
         else if BaudRate='19200' then
           ComPort1.BaudRate:=br19200
+          else if BaudRate='38400' then
+          ComPort1.BaudRate:=br38400
           else ComPort1.BaudRate:=br9600;
   if DataBit='5' then
     ComPort1.DataBits:=dbFive
@@ -388,7 +394,7 @@ begin
   if LoadInputPassDll then
   begin
     ss:='串口选择'+#2+'Combobox'+#2+'COM1'+#13+'COM2'+#13+'COM3'+#13+'COM4'+#13+'COM5'+#13+'COM6'+#2+'0'+#2+#2+#3+
-      '波特率'+#2+'Combobox'+#2+'19200'+#13+'9600'+#13+'4800'+#13+'2400'+#13+'1200'+#2+'0'+#2+#2+#3+
+      '波特率'+#2+'Combobox'+#2+'38400'+#13+'19200'+#13+'9600'+#13+'4800'+#13+'2400'+#13+'1200'+#2+'0'+#2+#2+#3+
       '数据位'+#2+'Combobox'+#2+'8'+#13+'7'+#13+'6'+#13+'5'+#2+'0'+#2+#2+#3+
       '停止位'+#2+'Combobox'+#2+'1'+#13+'1.5'+#13+'2'+#2+'0'+#2+#2+#3+
       '校验位'+#2+'Combobox'+#2+'None'+#13+'Even'+#13+'Odd'+#13+'Mark'+#13+'Space'+#2+'0'+#2+#2+#3+
@@ -454,6 +460,8 @@ VAR
   //FInts:IData2Lis;
   FInts:OleVariant;
   ReceiveItemInfo:OleVariant;
+  dlttype:string;
+  sValue:string;
 begin
   if length(memo1.Lines.Text)>=60000 then memo1.Lines.Clear;//memo只能接受64K个字符
   memo1.Lines.Add(Str);
@@ -462,7 +470,9 @@ begin
 
   ReceiveItemInfo:=VarArrayCreate([0,0],varVariant);
 
-  ReceiveItemInfo[0]:=VarArrayof([trim(copy(Str,21,8)),trim(copy(Str,29,6)),'','']);
+  dlttype:=trim(copy(Str,21,8));
+  sValue:=trim(copy(Str,29,6));
+  ReceiveItemInfo[0]:=VarArrayof([dlttype,sValue,'','']);
 
   if bRegister then
   begin
@@ -490,6 +500,30 @@ begin
     ComPort1.SetDTR(true);
     ComPort1.SetRTS(true);
   end;
+end;
+
+procedure TfrmMain.ComPort1RxBuf(Sender: TObject; const Buffer;
+  Count: Integer);
+//var
+//  p:Pbyte;
+//  c:PChar;
+begin
+  //self.ComPort1.Read(c,Count);
+end;
+
+procedure TfrmMain.ComPort1RxChar(Sender: TObject; Count: Integer);
+begin
+//
+end;
+
+procedure TfrmMain.ComPort1RxFlag(Sender: TObject);
+begin
+//
+end;
+
+procedure TfrmMain.ComPort1TxEmpty(Sender: TObject);
+begin
+//
 end;
 
 initialization
